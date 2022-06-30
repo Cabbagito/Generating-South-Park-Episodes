@@ -1,4 +1,4 @@
-from utils import get_trainer, get_tokenizer, get_model,is_gpu_available
+from utils import get_trainer, get_tokenizer, get_model, is_gpu_available, log
 from testing import test_model
 
 
@@ -13,21 +13,21 @@ FP16 = True
 
 
 if is_gpu_available():
-    print("\nUsing GPU")
+    log("Using GPU")
 else:
-    print("\nUsing CPU")
+    log("Using CPU")
 
-print("\nInitializing Tokenizer")
+log("Initializing Tokenizer")
 tokenizer = get_tokenizer()
 
-print("\nInitializing Model")
+log("Initializing Model")
 model = get_model(tokenizer,)
 
 
-print("\nComputing Metrics Before Training")
+log("Computing Metrics Before Training")
 # scores_before = test_model(model, tokenizer)
 
-print("\nInitializing Trainer")
+log("Initializing Trainer")
 trainer = get_trainer(
     model,
     tokenizer,
@@ -44,8 +44,8 @@ trainer = get_trainer(
 
 trainer.train()
 
-trainer.save_model("model")
+trainer.save_model("AI/model")
 
-print("\nComputing Metrics After Training")
+log("Computing Metrics After Training")
 # scores_after = test_model(model, tokenizer)
 
