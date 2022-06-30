@@ -2,7 +2,8 @@ from utils import get_trainer, get_tokenizer, get_model, is_gpu_available, log
 from testing import test_model
 
 
-EPOCHS = 1
+RUNS = 10
+EPOCHS = 2
 BATCH_SIZE = 4
 MAX_INPUT_LEN = 512
 GRADIENT_ACCUMULATION_STEPS = 4
@@ -21,11 +22,12 @@ log("Initializing Tokenizer")
 tokenizer = get_tokenizer()
 
 log("Initializing Model")
-model = get_model(tokenizer,)
+model = get_model(tokenizer)
 
 
 log("Computing Metrics Before Training")
-# scores_before = test_model(model, tokenizer)
+scores_before = test_model(model, tokenizer)
+print(scores_before)
 
 log("Initializing Trainer")
 trainer = get_trainer(
@@ -41,11 +43,14 @@ trainer = get_trainer(
     fp16=FP16,
 )
 
+scores_after = []
 
-trainer.train()
+for run in range(RUNS):
+    log(f"Starting Run {run+1}/{RUNS}")
+    trainer.train()
+    trainer.save_model(f"AI/model{run}")
 
-trainer.save_model("AI/model")
-
-log("Computing Metrics After Training")
-# scores_after = test_model(model, tokenizer)
+    log("Computing Metrics After Training")
+    scores_after.append(test_model(model, tokenizer))
+    print(scores_after[len(scores_after) - 1])
 
