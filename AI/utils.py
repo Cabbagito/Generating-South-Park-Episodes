@@ -5,6 +5,7 @@ from transformers import GPT2Tokenizer, GPT2LMHeadModel
 from torch.cuda import is_available
 from pickle import load
 from os import getcwd
+from random import shuffle
 
 
 def get_trainer(
@@ -22,7 +23,7 @@ def get_trainer(
 ):
 
     args = TrainingArguments(
-        output_dir="checkpoints" if getcwd().endswith("AI") else "AI/checkpoints",
+        output_dir="AI/checkpoints",
         num_train_epochs=epochs,
         weight_decay=weight_decay,
         learning_rate=learning_rate,
@@ -56,15 +57,16 @@ def get_tokenizer():
     return tokenizer
 
 
-def get_model(tokenizer, use_pretrained=False):
-    if use_pretrained:
-        return None
+def get_model(tokenizer, use_local=False):
+    if use_local:
+        name = "AI/model"
     else:
-        model = GPT2LMHeadModel.from_pretrained(
-            "gpt2",
-            eos_token_id=tokenizer.eos_token_id,
-            bos_token_id=tokenizer.bos_token_id,
-        )
+        name = "gpt2"
+    model = GPT2LMHeadModel.from_pretrained(
+        name,
+        eos_token_id=tokenizer.eos_token_id,
+        bos_token_id=tokenizer.bos_token_id,
+    )
     return model
 
 
@@ -76,14 +78,8 @@ def get_data_collator(tokenizer):
 
 def get_dataset(tokenizer, max_len=512, Test=False):
 
-    print("\nPreparing Data")
-    file = "SouthPark_Data_test.pkl" if Test else "SouthPark_Data_train.pkl"
-
-    prefix = ""
-    if getcwd().endswith("AI"):
-        prefix = "../"
-
-    file = prefix + "Data/" + file
+    log("Preparing Data")
+    file = "Data/SouthPark_Data_test.pkl" if Test else "Data/SouthPark_Data_train.pkl"
 
     data = load(open(file, "rb"))
 
@@ -98,5 +94,15 @@ def get_dataset(tokenizer, max_len=512, Test=False):
                 data_dict["input_ids"].append(tokenizer.encode("~") + input_ids[i:])
             else:
                 data_dict["input_ids"].append(input_ids[i : i + max_len])
+    shuffle(data_dict["input_ids"])
     return Dataset.from_dict(data_dict)
+
+
+
+
+def log(text):
+    print(50 * "*")
+    print(text)
+    print(50 * "*")
+    print("\n")
 
