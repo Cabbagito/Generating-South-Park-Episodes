@@ -1,10 +1,9 @@
-from datasets import Dataset, DatasetDict
+from datasets import Dataset
 from transformers import Trainer, TrainingArguments
 from transformers import DataCollatorForLanguageModeling
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 from torch.cuda import is_available
 from pickle import load
-from os import getcwd
 from random import shuffle
 
 
@@ -54,19 +53,19 @@ def is_gpu_available():
 def get_tokenizer():
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.pad_token_id = [tokenizer.eos_token_id]
     return tokenizer
 
 
-def get_model(tokenizer, use_local=False):
-    if use_local:
-        name = "AI/model"
+def get_model(tokenizer, checkpoint=None):
+    if checkpoint is not None:
+        name = f"AI/{checkpoint}"
     else:
         name = "gpt2"
     model = GPT2LMHeadModel.from_pretrained(
-        name,
-        eos_token_id=tokenizer.eos_token_id,
-        bos_token_id=tokenizer.bos_token_id,
+        name, eos_token_id=tokenizer.eos_token_id, bos_token_id=tokenizer.bos_token_id,
     )
+    model.pad_token_id = tokenizer.eos_token_id
     return model
 
 
@@ -80,7 +79,6 @@ def get_dataset(tokenizer, max_len=512, Test=False):
 
     log("Preparing Data")
     file = "Data/SouthPark_Data_test.pkl" if Test else "Data/SouthPark_Data_train.pkl"
-
     data = load(open(file, "rb"))
 
     data_dict = {"input_ids": []}
@@ -96,8 +94,6 @@ def get_dataset(tokenizer, max_len=512, Test=False):
                 data_dict["input_ids"].append(input_ids[i : i + max_len])
     shuffle(data_dict["input_ids"])
     return Dataset.from_dict(data_dict)
-
-
 
 
 def log(text):
