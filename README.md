@@ -23,6 +23,12 @@ The Repo contains 4 modules:
 
 ---
 
+## Models
+
+The models can be found [here](https://drive.google.com/drive/folders/1e2taNKJrRZ5_0ae_edxzaltnEQgN2lJd?usp=sharing). Once downloaded, the desired model folders have to be put in the */AI* folder. When calling the *get_model* function, the name should be specified in the *checkpoint* parameter.
+
+---
+
 ## Poster
 
 ![Poster](poster.png)
