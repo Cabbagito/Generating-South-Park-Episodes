@@ -9,10 +9,11 @@ def init(model_name=None):
     return model, tokenizer
 
 
-def generate_episode(model, tokenizer, episode_length=9000, prompt=""):
+def generate_episode(
+    model, tokenizer, episode_length=9000, prompt="", max_model_batch=512
+):
 
     episode = tokenizer.encode(prompt)
-    max_model_batch = 1024
     for i in tqdm(range(episode_length // max_model_batch + 1)):
 
         if i == 0:
