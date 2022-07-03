@@ -51,5 +51,5 @@ def compute_rouge(predictions, references):
 
 
 tokenizer = get_tokenizer()
-model = get_model(tokenizer)
+model = get_model(tokenizer,checkpoint="model9")
 print(test_model(model.cuda(), tokenizer))
