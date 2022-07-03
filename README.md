@@ -1,7 +1,7 @@
 # Generating South Park Episodes
 
 <center>
-	![South Park](https://media3.giphy.com/media/l3vR3mTSiTpV082Q0/giphy.gif?cid=790b761153590e114eebb6d2e2b78ab2cada04abecd7af1d&rid=giphy.gif)
+	<img src="https://media3.giphy.com/media/l3vR3mTSiTpV082Q0/giphy.gif?cid=790b761153590e114eebb6d2e2b78ab2cada04abecd7af1d&rid=giphy.gif"/>
 </center>
 
 ---
