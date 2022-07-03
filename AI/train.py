@@ -1,5 +1,10 @@
-from utils import get_trainer, get_tokenizer, get_model, is_gpu_available, log
-from testing import test_model
+from utils import (
+    get_trainer,
+    get_tokenizer,
+    get_model,
+    is_gpu_available,
+    log,
+)
 
 
 RUNS = 10
@@ -13,6 +18,10 @@ WEIGHT_DECAY = 0.1
 FP16 = True
 
 
+MODEL_NUM = 8
+
+CHECKPOINT_MODEL = f"model{MODEL_NUM}" if MODEL_NUM is not None else None
+
 if is_gpu_available():
     log("Using GPU")
 else:
@@ -22,12 +31,8 @@ log("Initializing Tokenizer")
 tokenizer = get_tokenizer()
 
 log("Initializing Model")
-model = get_model(tokenizer)
+model = get_model(tokenizer, checkpoint=CHECKPOINT_MODEL)
 
-
-log("Computing Metrics Before Training")
-scores_before = test_model(model, tokenizer)
-print(scores_before)
 
 log("Initializing Trainer")
 trainer = get_trainer(
@@ -43,14 +48,10 @@ trainer = get_trainer(
     fp16=FP16,
 )
 
-scores_after = []
 
-for run in range(RUNS):
+for run in range(MODEL_NUM + 1, RUNS):
     log(f"Starting Run {run+1}/{RUNS}")
     trainer.train()
+    log("Saving Model")
     trainer.save_model(f"AI/model{run}")
-
-    log("Computing Metrics After Training")
-    scores_after.append(test_model(model, tokenizer))
-    print(scores_after[len(scores_after) - 1])
 
