@@ -1,16 +1,20 @@
-from inference_utils import init
+from inference_utils import init, generate_episode
 
 print("***Initializing AI***")
-model, tokenizer, pipe = init()
+model, tokenizer = init("model2")
 print("***AI Initialized***\n")
 
-print("***Generating***\n")
 
-generated = pipe(
-    "|<endoftext>|Scene Description: There is a spear heading towards Kenny with astonishing speed! The spear hits Kenny right in the face and kills him.\nStan: Oh my God, they killed Kenny!\n",
-    max_length=1024,
-)[0]
+prompt = input("Enter Prompt: ")
 
 
-print(generated["generated_text"])
+episode = tokenizer.decode(
+    generate_episode(model.cuda(), tokenizer, episode_length=2000, prompt=prompt),
+    skip_special_tokens=True,
+)
 
+episode = episode.replace("~", "")
+
+# write episode to file
+with open("AI/episode.txt", "w") as f:
+    f.write(episode)
