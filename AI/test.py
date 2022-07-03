@@ -1,4 +1,4 @@
-from utils import get_dataset
+from utils import get_dataset, get_model, get_tokenizer
 from datasets import load_metric
 from tqdm import tqdm
 
@@ -8,11 +8,8 @@ def test_model(model, tokenizer, max_len=512):
     predictions = []
     references = []
     model_inputs = []
-    counter = 0
+
     for data_point in tqdm(test_data):
-        counter += 1
-        if counter == 51:
-            break
         input_ids = data_point["input_ids"]
         length = len(input_ids)
         half_index = int(length / 2)
@@ -52,3 +49,7 @@ def compute_rouge(predictions, references):
     }
     return scores
 
+
+tokenizer = get_tokenizer()
+model = get_model(tokenizer)
+print(test_model(model.cuda(), tokenizer))
